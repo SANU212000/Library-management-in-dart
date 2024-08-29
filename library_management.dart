@@ -11,12 +11,11 @@ class LibraryManager {
     if (books.any((b) => b.isbn == book.isbn)) {
       print('Error: A book with the ISBN ${book.isbn} already exists.');
       return;
-      
     }
-     if (!authors.any((a) => a.name == book.author)) {
+    if (!authors.any((a) => a.name == book.author)) {
       var newAuthor = Author(
         name: book.author,
-        dateOfBirth: DateTime.now(), 
+        dateOfBirth: DateTime.now(),
         booksWritten: [book.title],
       );
       authors.add(newAuthor);
@@ -25,7 +24,7 @@ class LibraryManager {
       var existingAuthor = authors.firstWhere((a) => a.name == book.author);
       existingAuthor.booksWritten.add(book.title);
     }
-{
+    {
       books.add(book);
       print('Book added successfully.');
     }
@@ -116,6 +115,15 @@ class LibraryManager {
   }
 
   void addAuthor(Author author) {
+    var existingAuthor = authors.firstWhere(
+      (a) => a.name == author.name && a.dateOfBirth == author.dateOfBirth
+    );
+
+    if (existingAuthor != null) {
+      print('Error: An author with the name "${author.name}" and date of birth "${author.dateOfBirth.toIso8601String()}" already exists.');
+      return;
+    }
+
     authors.add(author);
     print('Author added: ${author.name}');
   }
@@ -188,6 +196,5 @@ class LibraryManager {
   Member? searchMemberById(String memberId) {
     return members.firstWhere((member) => member.memberId == memberId);
   }
-
   void viewMembers() {}
 }

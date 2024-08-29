@@ -27,6 +27,17 @@ class Author {
     };
   }
 
+   @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Author &&
+        other.name == name &&
+        other.dateOfBirth == dateOfBirth;
+  }
+  @override
+  int get hashCode => name.hashCode ^ dateOfBirth.hashCode;
+
   @override
   String toString() {
     return 'Author: $name, DOB: ${dateOfBirth.toIso8601String()}, Books Written: ${booksWritten.join(', ')}';
