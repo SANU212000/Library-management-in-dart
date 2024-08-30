@@ -106,7 +106,7 @@ void addBook(LibraryManager libraryManager) {
     author = stdin.readLineSync()!;
   }
 
- int publicationYear;
+  int publicationYear;
   while (true) {
     print('Enter publication year:');
     var input = stdin.readLineSync()!;
@@ -116,7 +116,7 @@ void addBook(LibraryManager libraryManager) {
     } else {
       print('Error: Please enter a valid 4-digit publication year.');
     }
-  }                                      
+  }
   print('Enter genre:');
   var genre = stdin.readLineSync()!;
   print('Enter ISBN:');
@@ -191,18 +191,51 @@ void returnBook(LibraryManager libraryManager) {
 }
 
 void addAuthor(LibraryManager libraryManager) {
-  print('Enter author name:');
-  var name = stdin.readLineSync()!;
-  print('Enter date of birth (yyyy-mm-dd):');
-  var dateOfBirth = DateTime.parse(stdin.readLineSync()!);
-  print('Enter books written (comma separated):');
-  var booksWritten =
-      stdin.readLineSync()!.split(',').map((e) => e.trim()).toList();
+  while (true) {
+    try {
+      print('Enter author name:');
+      var name = stdin.readLineSync()!.trim();
 
-  var author =
-      Author(name: name, dateOfBirth: dateOfBirth, booksWritten: booksWritten);
-  libraryManager.addAuthor(author);
+      print('Enter date of birth (yyyy-mm-dd):');
+      var dateOfBirth = DateTime.parse(stdin.readLineSync()!.trim());
+
+      // Check if the author already exists
+      var existingAuthor = libraryManager.authors.firstWhere(
+        (author) => author.name == name && author.dateOfBirth == dateOfBirth,
+        orElse: () => Author(name: '', dateOfBirth: DateTime.now()), // Temporary placeholder
+      );
+
+      if (existingAuthor.name.isNotEmpty) {
+        print('Error: An author with the name "$name" and date of birth "${dateOfBirth.toIso8601String()}" already exists.');
+        return;
+      }
+
+      print('Enter books written (comma separated):');
+      var booksWritten = stdin.readLineSync()!
+          .split(',')
+          .map((e) => e.trim())
+          .toList();
+
+      var author = Author(
+        name: name,
+        dateOfBirth: dateOfBirth,
+        booksWritten: booksWritten,
+      );
+
+      libraryManager.addAuthor(author);
+      print('Author added successfully.');
+      return; // Exit the loop if everything is successful
+
+    } catch (e) {
+      print("An error occurred: $e");
+      print("Please try again.");
+      print("format 'yyyy-mm-dd' (e.g., '2001-01-01').");
+
+      // Optionally, you can include additional details about the error here
+    }
+  }
 }
+
 
 void updateAuthor(LibraryManager libraryManager) {
   print('Enter name of author to update:');
