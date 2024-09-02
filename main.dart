@@ -119,8 +119,20 @@ void addBook(LibraryManager libraryManager) {
   }
   print('Enter genre:');
   var genre = stdin.readLineSync()!;
+  while (genre == "") {
+    print('Error:Genre is Empty');
+    print('enter Genre:');
+    genre = stdin.readLineSync()!;
+  }
+
   print('Enter ISBN:');
   var isbn = stdin.readLineSync()!;
+  while (isbn == "") {
+    print('ISBN is empty');
+    print('Please enter a ISBN:');
+
+    isbn = stdin.readLineSync()!;
+  }
 
   var book = Book(
       title: title,
@@ -132,50 +144,114 @@ void addBook(LibraryManager libraryManager) {
 }
 
 void updateBook(LibraryManager libraryManager) {
-  print('Enter ISBN of book to update:');
+  try {
+    print('Enter ISBN of book to update:');
+    var isbn = stdin.readLineSync()!;
+     while(isbn==""){
+    print('ISBN is empty');
+    print('Please enter a ISBN:');
+   
+    isbn= stdin.readLineSync()!;
+  }
 
-  var isbn = stdin.readLineSync()!;
-  print('Enter new book title:');
-  var title = stdin.readLineSync()!;
-  print('Enter new author name:');
-  var author = stdin.readLineSync()!;
-  print('Enter new publication year:');
-  var publicationYear = int.parse(stdin.readLineSync()!);
-  print('Enter new genre:');
+    
+    print('Enter new book title:');
+    var title = stdin.readLineSync()!;
+  while (title=="") {
+    print("Book name is requried");
+    print('Enter book title:');
+    title = stdin.readLineSync()!;
+  }
+
+    print('Enter new author name:');
+     var author = stdin.readLineSync()!;
+  while (author == "") {
+    print('author name is required');
+    print('enter new author name:');
+    author = stdin.readLineSync()!;
+  }
+int publicationYear;
+     while (true) {
+    print('Enter publication year:');
+    var input = stdin.readLineSync()!;
+    if (input.length == 4 && int.tryParse(input) != null) {
+      publicationYear = int.parse(input);
+      break;
+    } else {
+      print('Please enter a valid 4-digit publication year.');
+    }
+  }
+
+    print('Enter genre:');
   var genre = stdin.readLineSync()!;
+  while (genre == "") {
+    print('enter Genre:');
+    genre = stdin.readLineSync()!;
+  }
 
-  var updatedBook = Book(
-      title: title,
-      author: author,
-      publicationYear: publicationYear,
-      genre: genre,
-      isbn: isbn);
-  libraryManager.updateBook(isbn, updatedBook);
+    var updatedBook = Book(
+        title: title,
+        author: author,
+        publicationYear: publicationYear,
+        genre: genre,
+        isbn: isbn);
+    libraryManager.updateBook(isbn, updatedBook);
+  } catch (err) {
+    print('book not found');
+    print('check ISBN number');
+  }
 }
 
 void deleteBook(LibraryManager libraryManager) {
   print('Enter ISBN of book to delete:');
-  var isbn = stdin.readLineSync()!;
-  libraryManager.deleteBook(isbn);
+  try {
+    var isbn = stdin.readLineSync()!;
+    libraryManager.deleteBook(isbn);
+    while (isbn == "") {
+      print("ISBN is Wrong/not given");
+    }
+  } catch (err) {
+    print('book not found');
+    print('check ISBN number');
+  }
 }
 
 void searchBook(LibraryManager libraryManager) {
   print('Enter title of book to search:');
-  var title = stdin.readLineSync()!;
-  var book = libraryManager.searchBookByTitle(title);
+  try {
+    var title = stdin.readLineSync()!;
+    var book = libraryManager.searchBookByTitle(title);
 
-  if (book != null) {
-    print('Book found: ${book}');
-  } else {
-    print('Book not found.');
+    if (book != null) {
+      print('Book found: ${book}');
+    } else {
+      print('Book not found.');
+    }
+    while (title == "") {
+      print("enter title please:");
+      title = stdin.readLineSync()!;
+    }
+  } catch (err) {
+    print('$err');
+    print('book not found');
   }
 }
 
 void lendBook(LibraryManager libraryManager) {
   print('Enter ISBN of book to lend:');
   var isbn = stdin.readLineSync()!;
+  while (isbn == "");
+  {
+    print('please check ISBN');
+    isbn = stdin.readLineSync()!;
+  }
   print('Enter member ID:');
   var memberId = stdin.readLineSync()!;
+  while (memberId == "");
+  {
+    print('please check Member ID');
+    memberId = stdin.readLineSync()!;
+  }
 
   libraryManager.lendBook(isbn, memberId);
 }
@@ -199,22 +275,18 @@ void addAuthor(LibraryManager libraryManager) {
       print('Enter date of birth (yyyy-mm-dd):');
       var dateOfBirth = DateTime.parse(stdin.readLineSync()!.trim());
 
-      // Check if the author already exists
       var existingAuthor = libraryManager.authors.firstWhere(
         (author) => author.name == name && author.dateOfBirth == dateOfBirth,
-        orElse: () => Author(name: '', dateOfBirth: DateTime.now()), // Temporary placeholder
+        orElse: () => Author(name: '', dateOfBirth: DateTime.now()),
       );
-
       if (existingAuthor.name.isNotEmpty) {
-        print('Error: An author with the name "$name" and date of birth "${dateOfBirth.toIso8601String()}" already exists.');
+        print(
+            'Error: An author with the name "$name" and date of birth "${dateOfBirth.toIso8601String()}" already exists.');
         return;
       }
-
       print('Enter books written (comma separated):');
-      var booksWritten = stdin.readLineSync()!
-          .split(',')
-          .map((e) => e.trim())
-          .toList();
+      var booksWritten =
+          stdin.readLineSync()!.split(',').map((e) => e.trim()).toList();
 
       var author = Author(
         name: name,
@@ -224,18 +296,13 @@ void addAuthor(LibraryManager libraryManager) {
 
       libraryManager.addAuthor(author);
       print('Author added successfully.');
-      return; // Exit the loop if everything is successful
-
-    } catch (e) {
-      print("An error occurred: $e");
-      print("Please try again.");
-      print("format 'yyyy-mm-dd' (e.g., '2001-01-01').");
-
-      // Optionally, you can include additional details about the error here
+      return;
+    } catch (err) {
+      print("Please try again.$err");
+      print('check the format (yyyy-mm-dd).');
     }
   }
 }
-
 
 void updateAuthor(LibraryManager libraryManager) {
   print('Enter name of author to update:');
@@ -245,7 +312,6 @@ void updateAuthor(LibraryManager libraryManager) {
   print('Enter new books written (comma separated):');
   var booksWritten =
       stdin.readLineSync()!.split(',').map((e) => e.trim()).toList();
-
   var updatedAuthor =
       Author(name: name, dateOfBirth: dateOfBirth, booksWritten: booksWritten);
   libraryManager.updateAuthor(name, updatedAuthor);

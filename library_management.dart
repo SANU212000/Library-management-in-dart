@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'book.dart';
 import 'author.dart';
 import 'member.dart';
@@ -166,13 +168,13 @@ class LibraryManager {
       members.add(member);
       print('Member added successfully.');
     }
+  }
 
-    void viewMembers() {
-      if (members.isEmpty) {
-        print('No members available.');
-      } else {
-        members.forEach((member) => print(member));
-      }
+  void viewMembers() {
+    if (members.isEmpty) {
+      print('No members available.');
+    } else {
+      members.forEach((member) => print(member));
     }
   }
 
@@ -196,5 +198,4 @@ class LibraryManager {
   Member? searchMemberById(String memberId) {
     return members.firstWhere((member) => member.memberId == memberId);
   }
-  void viewMembers() {}
 }

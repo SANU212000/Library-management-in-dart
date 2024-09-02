@@ -24,7 +24,7 @@ class DataPersistence {
     }
   }
 
-  Future<void> loadData() async {
+Future<void> loadData() async {
     try {
       var booksJson = await File('books.json').readAsString();
       var authorsJson = await File('authors.json').readAsString();
