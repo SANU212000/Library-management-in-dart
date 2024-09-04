@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 class Author {
+  String id;
   String name;
   DateTime dateOfBirth;
   List<String> booksWritten;
@@ -9,8 +8,16 @@ class Author {
     required this.name,
     required this.dateOfBirth,
     this.booksWritten = const [],
-  });
+  }) : id = _generateId(name, dateOfBirth);
 
+ 
+  static String _generateId(String name, DateTime dob) {
+    final base = '$name${dob.toIso8601String()}';
+    final hash = base.codeUnits.fold(0, (prev, elem) => prev + elem);
+    return hash.toString();
+  }
+
+ 
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(
       name: json['name'],
@@ -19,15 +26,18 @@ class Author {
     );
   }
 
+ 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,  
       'name': name,
       'dateOfBirth': dateOfBirth.toIso8601String(),
       'booksWritten': booksWritten,
     };
   }
-    
-   @override
+
+  
+  @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
@@ -35,6 +45,8 @@ class Author {
         other.name == name &&
         other.dateOfBirth == dateOfBirth;
   }
+
+ 
   @override
   int get hashCode => name.hashCode ^ dateOfBirth.hashCode;
 
