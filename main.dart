@@ -17,18 +17,21 @@ void main() async {
     print('2. View Books');
     print('3. Update Book');
     print('4. Delete Book');
-    print('5. Search Book');
-    print('6. Lend Book');
-    print('7. Return Book');
-    print('8. Add Author');
-    print('9. View Authors');
-    print('10. Update Author');
-    print('11. Delete Author');
-    print('12. Add Member');
-    print('13. View Members');
-    print('14. Update Member');
-    print('15. Delete Member');
-    print('16. Save and Exit');
+    print('5. Search Book by Title');
+    print('6. Search Book by ISBN');
+    print('7. Lend Book');
+    print('8. Return Book');
+    print('9. Add Author');
+    print('10. View Authors');
+    print('11. Update Author');
+    print('12. Delete Author');
+    print('13. Add Member');
+    print('14. View Members');
+    print('15. Update Member');
+    print('16. Delete Member');
+    print('17.Search Author and there books');
+    print('17. Save Data');
+    print('18. To Exit');
     print('Enter your choice:');
 
     var choice = stdin.readLineSync();
@@ -47,41 +50,50 @@ void main() async {
         deleteBook(libraryManager);
         break;
       case '5':
-        searchBook(libraryManager);
+        searchBookByTitle(libraryManager);
         break;
       case '6':
-        lendBook(libraryManager);
+        searchBookByIsbn(libraryManager);
         break;
       case '7':
-        returnBook(libraryManager);
+        lendBook(libraryManager);
         break;
       case '8':
-        addAuthor(libraryManager);
+        returnBook(libraryManager);
         break;
       case '9':
-        libraryManager.viewAuthors();
+        addAuthor(libraryManager);
         break;
       case '10':
-        updateAuthor(libraryManager);
+        libraryManager.viewAuthors();
         break;
       case '11':
-        deleteAuthor(libraryManager);
+        updateAuthor(libraryManager);
         break;
       case '12':
-        addMember(libraryManager);
+        deleteAuthor(libraryManager);
         break;
       case '13':
-        libraryManager.viewMembers();
+        addMember(libraryManager);
         break;
       case '14':
-        updateMember(libraryManager);
+        libraryManager.viewMembers();
         break;
       case '15':
-        deleteMember(libraryManager);
+        updateMember(libraryManager);
         break;
       case '16':
+        deleteMember(libraryManager);
+        break;
+      case '17':
+        searchBookByAuthor(libraryManager);
+        break;
+      case '18':
         await dataPersistence.saveData();
-        print('Data saved. Exiting...');
+        print('Data saved.');
+        break;
+      case '19':
+        print("exiting.....");
         return;
       default:
         print('Invalid choice. Please try again.');
@@ -208,14 +220,19 @@ void deleteBook(LibraryManager libraryManager) {
       print("ISBN is wrong or not given. Please enter a valid ISBN:");
       isbn = stdin.readLineSync();
     }
-    deleteBook(isbn as LibraryManager);
+    bool deleted = libraryManager.deleteBookByISBN(isbn);
+    if (deleted) {
+      print('Book deleted successfully.');
+    } else {
+      print('Book not found.');
+    }
   } catch (err) {
     print('book not found $err');
     print('check ISBN number');
   }
 }
 
-void searchBook(LibraryManager libraryManager) {
+void searchBookByTitle(LibraryManager libraryManager) {
   print('Enter title of book to search:');
   try {
     var title = stdin.readLineSync()!;
@@ -225,6 +242,49 @@ void searchBook(LibraryManager libraryManager) {
       title = stdin.readLineSync()!;
     }
     var book = libraryManager.searchBookByTitle(title);
+
+    if (book != null) {
+      print('Book found: ${book}');
+    } else {
+      print('Book not found.');
+    }
+  } catch (err) {
+    print('book not found');
+    print('try again');
+  }
+}
+void searchBookByAuthor(LibraryManager libraryManager) {
+  print('Enter author name to search:');
+  try {
+    var  name= stdin.readLineSync()!;
+    while (name == '') {
+      print('check book title?');
+      print('try again:');
+      name= stdin.readLineSync()!;
+    }
+    var authorName = libraryManager.searchBookByAuthor(name);
+
+    if (authorName != null) {
+      print('Book found: ${authorName}');
+    } else {
+      print('Book not found.');
+    }
+  } catch (err) {
+    print('book not found');
+    print('try again');
+  }
+}
+
+void searchBookByIsbn(LibraryManager libraryManager) {
+  print('Enter title of book to search:');
+  try {
+    var isbn = stdin.readLineSync()!;
+    while (isbn == '') {
+      print('check book title?');
+      print('try again:');
+      isbn = stdin.readLineSync()!;
+    }
+    var book = libraryManager.searchBookByIsbn(isbn);
 
     if (book != null) {
       print('Book found: ${book}');
@@ -266,52 +326,65 @@ void returnBook(LibraryManager libraryManager) {
   libraryManager.returnBook(isbn, memberId);
 }
 
-void addAuthor(LibraryManager libraryManager) {
+void addAuthor(LibraryManager LibraryManager) {
   while (true) {
     try {
       print('Enter author name:');
       var name = stdin.readLineSync()!.trim();
       while (name == '') {
-        print('author is empty');
-        print('name of author to update');
+        print('Author name is empty. Please enter a valid author name:');
         name = stdin.readLineSync()!.trim();
       }
+
       print('Enter date of birth (yyyy-mm-dd):');
       var dateOfBirth = DateTime.parse(stdin.readLineSync()!.trim());
       while (dateOfBirth == '') {
-        print('DOB is empty');
-        print('Enter new date of birth (yyyy-mm-dd):');
+        print('check dob');
         dateOfBirth = DateTime.parse(stdin.readLineSync()!.trim());
       }
 
-      var existingAuthor = libraryManager.authors.firstWhere(
-        (author) => author.name == name && author.dateOfBirth == dateOfBirth,
-        orElse: () => Author(name: '', dateOfBirth: DateTime.now()),
-      );
-      if (existingAuthor.name.isNotEmpty) {
+      var newAuthorId = Author.generateId(name, dateOfBirth);
+
+      
+
+      // Check if an author with the generated ID already exists
+      var existingAuthor = LibraryManager.authors.firstWhere(
+        (author) => author.id == newAuthorId,
+        orElse: () =>emptyAuthor,
+    );
+
+      if (existingAuthor != emptyAuthor) {
         print(
             'Error: An author with the name "$name" and date of birth "${dateOfBirth.toIso8601String()}" already exists.');
         return;
       }
+
       print('Enter books written (comma separated):');
       var booksWritten =
           stdin.readLineSync()!.split(',').map((e) => e.trim()).toList();
 
-      var author = Author(
+      // Create a new author with the generated unique ID
+      var newAuthor = Author(
         name: name,
         dateOfBirth: dateOfBirth,
         booksWritten: booksWritten,
       );
 
-      libraryManager.addAuthor(author);
+      // Add the new author to the library
+      LibraryManager.addAuthor(newAuthor);
       print('Author added successfully.');
       return;
     } catch (err) {
-      print("Please try again.$err");
-      print('check the format (yyyy-mm-dd).');
+      print('Error: Invalid input or format. Please try again. $err');
+      print('Ensure the date format is correct (yyyy-mm-dd).');
     }
   }
 }
+Author emptyAuthor = Author(
+  name: '', // or some default value
+  dateOfBirth: DateTime(1900, 1, 1), // or some default value
+  booksWritten: [], // or some default value
+);
 
 void updateAuthor(LibraryManager libraryManager) {
   print('Enter name of author to update:');

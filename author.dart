@@ -8,16 +8,15 @@ class Author {
     required this.name,
     required this.dateOfBirth,
     this.booksWritten = const [],
-  }) : id = _generateId(name, dateOfBirth);
+  }) : id = generateId(name, dateOfBirth);
 
- 
-  static String _generateId(String name, DateTime dob) {
+  // Generate a unique ID based on the author's name and date of birth
+  static String generateId(String name, DateTime dob) {
     final base = '$name${dob.toIso8601String()}';
     final hash = base.codeUnits.fold(0, (prev, elem) => prev + elem);
-    return hash.toString();
+    return hash.toString(); // Use hash as the unique ID
   }
 
- 
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(
       name: json['name'],
@@ -26,7 +25,6 @@ class Author {
     );
   }
 
- 
   Map<String, dynamic> toJson() {
     return {
       'id': id,  
@@ -36,22 +34,20 @@ class Author {
     };
   }
 
-  
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is Author &&
-        other.name == name &&
-        other.dateOfBirth == dateOfBirth;
+        other.id == id;  // Now comparing by unique ID
   }
 
- 
   @override
-  int get hashCode => name.hashCode ^ dateOfBirth.hashCode;
+  int get hashCode => id.hashCode;
 
   @override
   String toString() {
     return 'Author: $name, DOB: ${dateOfBirth.toIso8601String()}, Books Written: ${booksWritten.join(', ')}';
   }
+
 }
