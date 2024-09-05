@@ -100,7 +100,9 @@ class LibraryManager {
   Book? searchBookByTitle(String title) {
     return books.firstWhere((book) => book.title == title);
   }
-
+Book? getBookByISBN(String isbn) {
+    return books.firstWhere((book) => book.isbn == isbn);
+  }
   Book? searchBookByIsbn(String isbn) {
     return books.firstWhere((book) => book.isbn == isbn);
   }
@@ -241,3 +243,5 @@ class LibraryManager {
     return members.firstWhere((member) => member.memberId == memberId);
   }
 }
+
+
