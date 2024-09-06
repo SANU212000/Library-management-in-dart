@@ -5,62 +5,62 @@ import 'author.dart';
 import 'main.dart';
 import 'member.dart';
 import 'dart:io';
-import 'dart:convert';
+
 
 class LibraryManager {
   List<Book> books = [];
   List<Author> authors = [];
   List<Member> members = [];
 
+
+// --------Book section-------------------------------------------------------------------->
+
+
+
   void addBook(Book book) {
-
-  if (books.any((b) => b.isbn == book.isbn)) {
-    print('Error: A book with the ISBN ${book.isbn} already exists.');
-    return;
-  }
-
- 
-  var existingAuthor = authors.firstWhere(
-    (a) => a.name == book.author,
-    orElse: () => emptyAuthor,
-  );
-
-  if (existingAuthor == emptyAuthor) {
-    
-    DateTime dateOfBirth;
-    while (true) {
-      try {
-        print('Enter date of birth for the author ${book.author} (yyyy-mm-dd):');
-        var input = stdin.readLineSync();
-        dateOfBirth = DateTime.parse(input!);
-        break; 
-      } catch (e) {
-        print('Invalid date format. Please enter the date in yyyy-mm-dd format.');
-      }
-    }
-    var duplicateAuthor = authors.any((a) => a.dateOfBirth == dateOfBirth);
-    if (duplicateAuthor) {
-      print('Error: An author with the same date of birth already exists.');
+    if (books.any((b) => b.isbn == book.isbn)) {
+      print('Error: A book with the ISBN ${book.isbn} already exists.');
       return;
     }
 
-    var newAuthor = Author(
-      name: book.author,
-      dateOfBirth: dateOfBirth,
-      booksWritten: [book.title],
+    var existingAuthor = authors.firstWhere(
+      (a) => a.name == book.author,
+      orElse: () => emptyAuthor,
     );
-    authors.add(newAuthor);
-    print('Author ${book.author} registered successfully.');
-  } else {
-  
-    existingAuthor.booksWritten.add(book.title);
+
+    if (existingAuthor == emptyAuthor) {
+      DateTime dateOfBirth;
+      while (true) {
+        try {
+          print(
+              'Enter date of birth for the author ${book.author} (yyyy-mm-dd):');
+          var input = stdin.readLineSync();
+          dateOfBirth = DateTime.parse(input!);
+          break;
+        } catch (e) {
+          print(
+              'Invalid date format. Please enter the date in yyyy-mm-dd format.');
+        }
+      }
+      var duplicateAuthor = authors.any((a) => a.dateOfBirth == dateOfBirth);
+      if (duplicateAuthor) {
+        print('Error: An author with the same date of birth already exists.');
+        return;
+      }
+
+      var newAuthor = Author(
+        name: book.author,
+        dateOfBirth: dateOfBirth,
+        booksWritten: [book.title],
+      );
+      authors.add(newAuthor);
+      print('Author ${book.author} registered successfully.');
+    } else {
+      existingAuthor.booksWritten.add(book.title);
+    }
+    books.add(book);
+    print('Book added successfully.');
   }
-
- 
-  books.add(book);
-  print('Book added successfully.');
-}
-
 
   void viewBooks() {
     if (books.isEmpty) {
@@ -97,19 +97,33 @@ class LibraryManager {
     return books.length < initialCount;
   }
 
+// -------------- Search section ---------------------------------------------------------------------->
+ 
+ 
+  Author? searchAuthorByName(String name) {
+    return authors.firstWhere((author) => author.name == name);
+  }
+    Member? searchMemberById(String memberId) {
+    return members.firstWhere((member) => member.memberId == memberId);
+  }
+
+
   Book? searchBookByTitle(String title) {
     return books.firstWhere((book) => book.title == title);
   }
-Book? getBookByISBN(String isbn) {
+
+  Book? getBookByISBN(String isbn) {
     return books.firstWhere((book) => book.isbn == isbn);
   }
+
   Book? searchBookByIsbn(String isbn) {
     return books.firstWhere((book) => book.isbn == isbn);
   }
+
   Author? searchBookByAuthor(String name) {
     return authors.firstWhere((Author) => Author.name == name);
   }
-  
+// ------------distrubuted section------------------------------------------------------------->
 
   void lendBook(String isbn, String memberId) {
     var book = searchBookByIsbn(isbn);
@@ -159,6 +173,10 @@ Book? getBookByISBN(String isbn) {
     print('Book returned.');
   }
 
+
+//------------------ Author section----------------------------------------------------------->\
+
+
   void addAuthor(Author author) {
     var existingAuthor = authors.firstWhere(
       (a) => a.id == author.id,
@@ -184,6 +202,7 @@ Book? getBookByISBN(String isbn) {
       print(author);
     }
   }
+
   void updateAuthor(String name, Author updatedAuthor) {
     for (var author in authors) {
       if (author.name == name) {
@@ -197,13 +216,26 @@ Book? getBookByISBN(String isbn) {
   }
 
   void deleteAuthor(String name) {
-    authors.removeWhere((author) => author.name == name);
-    print('Author deleted.');
+    bool authorExists = authors.any((author) => author.name == name);
+
+    if (authorExists) {
+      authors.removeWhere((author) => author.name == name);
+      print('Author deleted.');
+    } else {
+      print('Error: Author not found.');
+    }
   }
 
-  Author? searchAuthorByName(String name) {
-    return authors.firstWhere((author) => author.name == name);
+
+  bool isMemberIdExists(String memberId) {
+    return members.any((member) => member.memberId == memberId);
   }
+
+
+
+//------------------ member section------------------------------------------------------------->
+
+
 
   void addMember(Member member) {
     if (members.any((m) => m.memberId == member.memberId)) {
@@ -233,15 +265,16 @@ Book? getBookByISBN(String isbn) {
     }
     print('Member not found.');
   }
+void deleteMember(String memberId) {
+  bool memberExists = members.any((member) => member.memberId == memberId);
 
-  void deleteMember(String memberId) {
+  if (memberExists) {
     members.removeWhere((member) => member.memberId == memberId);
     print('Member deleted.');
-  }
-
-  Member? searchMemberById(String memberId) {
-    return members.firstWhere((member) => member.memberId == memberId);
+  } else {
+    print('Error: Member not found.');
   }
 }
 
 
+}
