@@ -355,6 +355,7 @@ void searchBookByAuthor(LibraryManager libraryManager) {
 // ------------distrubuted section------------------------------------------------------------->
 
 void lendBook(LibraryManager libraryManager) {
+  try{
   print('Enter ISBN of book to lend:');
   var isbn = stdin.readLineSync()!;
   while (isbn == "")
@@ -371,8 +372,10 @@ void lendBook(LibraryManager libraryManager) {
   }
 
   libraryManager.lendBook(isbn, memberId);
-}
-
+  }catch(e){
+    print('check ISBN or member ID:');
+  }
+  }
 void returnBook(LibraryManager libraryManager) {
   try {
     print('Enter ISBN of book to return:');
@@ -470,7 +473,7 @@ Author emptyAuthor = Author(
 );
 
 void updateAuthor(LibraryManager libraryManager) {
-  
+try{
   print('Enter the name of the author to update:');
   var name = stdin.readLineSync()!;
   while (name.isEmpty) {
@@ -519,14 +522,15 @@ void updateAuthor(LibraryManager libraryManager) {
     default:
       print('Invalid choice. Please try again.');
       return;
-  }
-
-  
+  }  
   libraryManager.updateAuthor(name, author);
   print('Author updated successfully.');
 }
-
-
+catch(e) {
+    print('check isbn:');
+    print('$e');
+  }
+}
 bool isValidDate(String input) {
   try {
     DateTime.parse(input);
@@ -535,6 +539,7 @@ bool isValidDate(String input) {
     return false;
   }
 }
+
 
 void deleteAuthor(LibraryManager libraryManager) {
   try {
@@ -647,8 +652,6 @@ void deleteMember(LibraryManager libraryManager) {
       print('Enter ID of member to delete:');
       memberId = stdin.readLineSync()!;
     }
-
-   
     libraryManager.deleteMember(memberId);
   } catch (e) {
     print('$e, try again..');
