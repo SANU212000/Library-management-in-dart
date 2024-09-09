@@ -1,21 +1,15 @@
-// ignore_for_file: unused_element
-
 import 'book.dart';
 import 'author.dart';
 import 'main.dart';
 import 'member.dart';
 import 'dart:io';
 
-
 class LibraryManager {
   List<Book> books = [];
   List<Author> authors = [];
   List<Member> members = [];
 
-
-// --------Book section-------------------------------------------------------------------->
-
-
+// ------------Book Section---------------------------------------------------------------=>
 
   void addBook(Book book) {
     if (books.any((b) => b.isbn == book.isbn)) {
@@ -97,16 +91,15 @@ class LibraryManager {
     return books.length < initialCount;
   }
 
-// -------------- Search section ---------------------------------------------------------------------->
- 
- 
+// ------------Search Section-------------------------------------------------------------=>
+
   Author? searchAuthorByName(String name) {
     return authors.firstWhere((author) => author.name == name);
   }
-    Member? searchMemberById(String memberId) {
+
+  Member? searchMemberById(String memberId) {
     return members.firstWhere((member) => member.memberId == memberId);
   }
-
 
   Book? searchBookByTitle(String title) {
     return books.firstWhere((book) => book.title == title);
@@ -123,7 +116,11 @@ class LibraryManager {
   Author? searchBookByAuthor(String name) {
     return authors.firstWhere((Author) => Author.name == name);
   }
-// ------------distrubuted section------------------------------------------------------------->
+
+  Author? searchAuthorByAuthorId(String id) {
+    return authors.firstWhere((Author) => Author.id == id);
+  }
+// ------------Distrubuted Section--------------------------------------------------------=>
 
   void lendBook(String isbn, String memberId) {
     var book = searchBookByIsbn(isbn);
@@ -173,9 +170,7 @@ class LibraryManager {
     print('Book returned.');
   }
 
-
-//------------------ Author section----------------------------------------------------------->\
-
+//-------------Author Section-------------------------------------------------------------=>
 
   void addAuthor(Author author) {
     var existingAuthor = authors.firstWhere(
@@ -190,7 +185,8 @@ class LibraryManager {
     }
 
     authors.add(author);
-    print('Author added successfully.');
+    print('Author $author is added successfully...');
+    print('AuthorID is ${author.id}');
   }
 
   void viewAuthors() {
@@ -199,21 +195,26 @@ class LibraryManager {
       return;
     }
     for (var author in authors) {
-      print(author);
+      print('Author ID: ${author.id}');
+    print('Name: ${author.name}');
+    print('Date of Birth: ${author.dateOfBirth}');
+    print('Books Written: ${author.booksWritten.join(', ')}');
+    print('------------------------------------');
     }
   }
 
-  void updateAuthor(String name, Author updatedAuthor) {
-    for (var author in authors) {
-      if (author.name == name) {
-        author.dateOfBirth = updatedAuthor.dateOfBirth;
-        author.booksWritten = updatedAuthor.booksWritten;
-        print('Author updated: ${author.name}');
-        return;
-      }
+ void updateAuthor(String authorId, Author updatedAuthor) {
+  for (var author in authors) {
+    if (author.id == authorId) {
+      author.name = updatedAuthor.name;
+      author.dateOfBirth = updatedAuthor.dateOfBirth;
+      author.booksWritten = updatedAuthor.booksWritten;
+      print('Author updated: ${author.name}');
+      return;
     }
-    print('Author not found.');
   }
+  print('Author not found.');
+}
 
   void deleteAuthor(String name) {
     bool authorExists = authors.any((author) => author.name == name);
@@ -226,16 +227,11 @@ class LibraryManager {
     }
   }
 
-
   bool isMemberIdExists(String memberId) {
     return members.any((member) => member.memberId == memberId);
   }
 
-
-
-//------------------ member section------------------------------------------------------------->
-
-
+//-------------Member Section-------------------------------------------------------------=>
 
   void addMember(Member member) {
     if (members.any((m) => m.memberId == member.memberId)) {
@@ -265,16 +261,15 @@ class LibraryManager {
     }
     print('Member not found.');
   }
-void deleteMember(String memberId) {
-  bool memberExists = members.any((member) => member.memberId == memberId);
 
-  if (memberExists) {
-    members.removeWhere((member) => member.memberId == memberId);
-    print('Member deleted.');
-  } else {
-    print('Error: Member not found.');
+  void deleteMember(String memberId) {
+    bool memberExists = members.any((member) => member.memberId == memberId);
+
+    if (memberExists) {
+      members.removeWhere((member) => member.memberId == memberId);
+      print('Member deleted.');
+    } else {
+      print('Error: Member not found.');
+    }
   }
-}
-
-
 }
