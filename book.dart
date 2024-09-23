@@ -5,6 +5,7 @@ class Book {
   String genre;
   String isbn;
   bool isLent;
+   String? lentTo; 
 
   Book({
     required this.title,

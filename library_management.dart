@@ -122,30 +122,6 @@ class LibraryManager {
   }
 // ------------Distrubuted Section--------------------------------------------------------=>
 
-  void lendBook(String isbn, String memberId) {
-    var book = searchBookByIsbn(isbn);
-    var member = searchMemberById(memberId);
-
-    if (book == null) {
-      print('Book not found.');
-      return;
-    }
-
-    if (member == null) {
-      print('Member not found.');
-      return;
-    }
-
-    if (book.isLent) {
-      print('Book is already lent.');
-      return;
-    }
-
-    book.isLent = true;
-    member.borrowedBooks.add(isbn);
-    print('Book lent to member.');
-  }
-
   void returnBook(String isbn, String memberId) {
     var book = searchBookByIsbn(isbn);
     var member = searchMemberById(memberId);
@@ -168,6 +144,27 @@ class LibraryManager {
     book.isLent = false;
     member.borrowedBooks.remove(isbn);
     print('Book returned.');
+  }
+
+  Map<String, int> lentBooksCount = {};
+  void lendBook(String isbn, String memberId) {
+    var book = getBookByISBN(isbn);
+    if (book != null && !book.isLent) {
+      book.isLent = true;
+      book.lentTo = memberId;
+
+      lentBooksCount[memberId] = (lentBooksCount[memberId] ?? 0) + 1;
+      print('Book "$isbn" lent to member "$memberId".');
+    } else {
+      print('Book is either not found or already lent.');
+    }
+  }
+
+  void viewLentBooksCount() {
+    print('Lent Books Count:');
+    lentBooksCount.forEach((memberId, count) {
+      print('Member ID: $memberId has lent $count book(s).');
+    });
   }
 
 //-------------Author Section-------------------------------------------------------------=>
@@ -196,25 +193,25 @@ class LibraryManager {
     }
     for (var author in authors) {
       print('Author ID: ${author.id}');
-    print('Name: ${author.name}');
-    print('Date of Birth: ${author.dateOfBirth}');
-    print('Books Written: ${author.booksWritten.join(', ')}');
-    print('------------------------------------');
+      print('Name: ${author.name}');
+      print('Date of Birth: ${author.dateOfBirth}');
+      print('Books Written: ${author.booksWritten.join(', ')}');
+      print('------------------------------------');
     }
   }
 
- void updateAuthor(String authorId, Author updatedAuthor) {
-  for (var author in authors) {
-    if (author.id == authorId) {
-      author.name = updatedAuthor.name;
-      author.dateOfBirth = updatedAuthor.dateOfBirth;
-      author.booksWritten = updatedAuthor.booksWritten;
-      print('Author updated: ${author.name}');
-      return;
+  void updateAuthor(String authorId, Author updatedAuthor) {
+    for (var author in authors) {
+      if (author.id == authorId) {
+        author.name = updatedAuthor.name;
+        author.dateOfBirth = updatedAuthor.dateOfBirth;
+        author.booksWritten = updatedAuthor.booksWritten;
+        print('Author updated: ${author.name}');
+        return;
+      }
     }
+    print('Author not found.');
   }
-  print('Author not found.');
-}
 
   void deleteAuthor(String name) {
     bool authorExists = authors.any((author) => author.name == name);

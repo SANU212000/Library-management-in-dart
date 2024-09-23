@@ -5,6 +5,7 @@ import 'book.dart';
 import 'author.dart';
 import 'member.dart';
 import 'api.dart';
+
 void main() async {
   var libraryManager = LibraryManager();
   var dataPersistence = DataPersistence(libraryManager);
@@ -20,16 +21,17 @@ void main() async {
     print('5. Search Option');
     print('6. Lend Book');
     print('7. Return Book');
-    print('8. Add Author');
-    print('9. View Authors');
-    print('10. Update Author');
-    print('11. Delete Author');
-    print('12. Add Member');
-    print('13. View Members');
-    print('14. Update Member');
-    print('15. Delete Member');
-    print('16. Save Data');
-    print('17. To Exit');
+    print('8. View Lent Books Count');
+    print('9. Add Author');
+    print('10. View Authors');
+    print('11. Update Author');
+    print('12. Delete Author');
+    print('13. Add Member');
+    print('14. View Members');
+    print('15. Update Member');
+    print('16. Delete Member');
+    print('17. Save Data');
+    print('18. To Exit');
     print('\nEnter your choice:');
 
     var choice = stdin.readLineSync();
@@ -57,35 +59,38 @@ void main() async {
       case '7':
         returnBook(libraryManager);
         break;
-      case '8':
-        addAuthor(libraryManager);
+        case '8':
+        libraryManager.viewLentBooksCount();
         break;
       case '9':
-        libraryManager.viewAuthors();
+        addAuthor(libraryManager);
         break;
       case '10':
-        updateAuthor(libraryManager);
+        libraryManager.viewAuthors();
         break;
       case '11':
-        deleteAuthor(libraryManager);
+        updateAuthor(libraryManager);
         break;
       case '12':
-        addMember(libraryManager);
+        deleteAuthor(libraryManager);
         break;
       case '13':
-        libraryManager.viewMembers();
+        addMember(libraryManager);
         break;
       case '14':
-        updateMember(libraryManager);
+        libraryManager.viewMembers();
         break;
       case '15':
-        deleteMember(libraryManager);
+        updateMember(libraryManager);
         break;
       case '16':
+        deleteMember(libraryManager);
+        break;
+      case '17':
         await dataPersistence.saveData();
         print('Data saved.');
         break;
-      case '17':
+      case '18':
         print("exiting.....");
         return;
       default:
@@ -528,7 +533,8 @@ void updateAuthor(LibraryManager libraryManager) {
         print('Enter new date of birth (yyyy-mm-dd):');
         var dateInput = stdin.readLineSync()!;
         while (dateInput.isEmpty || !isValidDate(dateInput)) {
-          print('Invalid or empty date. Please enter a valid date (yyyy-mm-dd):');
+          print(
+              'Invalid or empty date. Please enter a valid date (yyyy-mm-dd):');
           dateInput = stdin.readLineSync()!;
         }
         author.dateOfBirth = DateTime.parse(dateInput);
@@ -547,9 +553,8 @@ void updateAuthor(LibraryManager libraryManager) {
     }
 
     // Update the author in the library manager
-   libraryManager.updateAuthor(author.id, author);
+    libraryManager.updateAuthor(author.id, author);
     print('Author updated successfully.');
-    
   } catch (e) {
     print('An error occurred:');
     print('$e');
