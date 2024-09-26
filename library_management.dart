@@ -1,3 +1,4 @@
+import 'api.dart';
 import 'book.dart';
 import 'author.dart';
 import 'main.dart';
@@ -8,6 +9,17 @@ class LibraryManager {
   List<Book> books = [];
   List<Author> authors = [];
   List<Member> members = [];
+
+  // final DataPersistence dataPersistence;
+
+  // LibraryManager(this.dataPersistence);
+  late DataPersistence dataPersistence; 
+
+  LibraryManager();
+
+  void setDataPersistence(DataPersistence dataPersistence) {
+    this.dataPersistence = dataPersistence;
+  }
 
 // ------------Book Section---------------------------------------------------------------=>
 
@@ -35,6 +47,7 @@ class LibraryManager {
           print(
               'Invalid date format. Please enter the date in yyyy-mm-dd format.');
         }
+        ;
       }
       var duplicateAuthor = authors.any((a) => a.dateOfBirth == dateOfBirth);
       if (duplicateAuthor) {
@@ -54,6 +67,7 @@ class LibraryManager {
     }
     books.add(book);
     print('Book added successfully.');
+    dataPersistence.saveData();
   }
 
   void viewBooks() {
@@ -83,14 +97,20 @@ class LibraryManager {
     if (!bookFound) {
       print('Book with ISBN $isbn not found.');
     }
+    dataPersistence.saveData();
   }
 
   bool deleteBookByISBN(String isbn) {
     int initialCount = books.length;
     books.removeWhere((book) => book.isbn == isbn);
-    return books.length < initialCount;
-  }
 
+    if (books.length < initialCount) {
+      // Auto-save after deleting a book
+      dataPersistence.saveData();
+      return true;
+    }
+    return false;
+  }
 // ------------Search Section-------------------------------------------------------------=>
 
   Author? searchAuthorByName(String name) {
@@ -184,6 +204,7 @@ class LibraryManager {
     authors.add(author);
     print('Author $author is added successfully...');
     print('AuthorID is ${author.id}');
+    dataPersistence.saveData();
   }
 
   void viewAuthors() {
@@ -211,6 +232,7 @@ class LibraryManager {
       }
     }
     print('Author not found.');
+    dataPersistence.saveData();
   }
 
   void deleteAuthor(String name) {
@@ -222,6 +244,7 @@ class LibraryManager {
     } else {
       print('Error: Author not found.');
     }
+    dataPersistence.saveData();
   }
 
   bool isMemberIdExists(String memberId) {
@@ -236,7 +259,7 @@ class LibraryManager {
     } else {
       members.add(member);
       print('Member added successfully.');
-    }
+    }dataPersistence.saveData();
   }
 
   void viewMembers() {
@@ -257,6 +280,7 @@ class LibraryManager {
       }
     }
     print('Member not found.');
+    dataPersistence.saveData();
   }
 
   void deleteMember(String memberId) {
@@ -268,5 +292,7 @@ class LibraryManager {
     } else {
       print('Error: Member not found.');
     }
+    dataPersistence.saveData();
   }
+
 }

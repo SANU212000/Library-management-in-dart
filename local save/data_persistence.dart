@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'book.dart';
-import 'author.dart';
-import 'member.dart';
-import 'library_management.dart';
+import '../book.dart';
+import '../author.dart';
+import '../member.dart';
+import '../library_management.dart';
 
 
 class DataPersistence {

@@ -7,8 +7,13 @@ import 'member.dart';
 import 'api.dart';
 
 void main() async {
-  var libraryManager = LibraryManager();
-  var dataPersistence = DataPersistence(libraryManager);
+  var libraryManager = LibraryManager(); // Create LibraryManager first
+  var dataPersistence = DataPersistence(libraryManager); // Then create DataPersistence
+
+  // Set the DataPersistence instance after both are created
+  libraryManager.setDataPersistence(dataPersistence);
+
+  // Now you can call any methods that depend on dataPersistence
 
   await dataPersistence.loadData();
 
